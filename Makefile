@@ -24,8 +24,8 @@ config: module
 	cat ./site.yml
 
 link: config
-	ln -sf ./terraform.tfvars ./template/terraform/terraform.tfvars
-	ln -sf ./site.yml ./template/ansible/site.yml
+	ln -sf ../../terraform.tfvars ./template/terraform/terraform.tfvars
+	ln -sf ../../site.yml ./template/ansible/site.yml
 
 %:
 	$(MAKE) -C template $@
