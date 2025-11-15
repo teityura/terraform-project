@@ -1,32 +1,33 @@
-.PHONY: default setup module config link
+.PHONY: default setup dir mod conf link
 
 default: deploy
-setup: module config link
+setup: mod dir conf link
 
-module:
+dir:
+	mkdir -p inventories/group_vars/all
+	mkdir -p inventories/host_vars
+	mkdir -p roles/test/tasks/
+
+mod:
 	@if [ ! -d template ]; then \
-		echo "=== Adding template ==="; \
 		git submodule add https://github.com/teityura/terraform-template.git template; \
 	else \
-		echo "=== Updating template ==="; \
 		git submodule update --init --recursive --remote template; \
 	fi
 
-config: module
+conf: mod
 	@echo "=== Creating tfvars ==="
 	cp --update=none ./template/terraform/terraform.tfvars.sample ./terraform.tfvars
-	@echo "=== Current configuration ==="
 	cat ./terraform.tfvars
 
 	@echo "=== Creating site.yml ==="
 	cp --update=none ./template/ansible/site.yml.sample ./site.yml
-	@echo "=== Current configuration ==="
 	cat ./site.yml
 
-link: config
+link: conf
+	@echo "=== Creating dir ==="
 	ln -sf ../../terraform.tfvars ./template/terraform/terraform.tfvars
 	ln -sf ../../site.yml ./template/ansible/site.yml
 
 %:
 	$(MAKE) -C template $@
-
